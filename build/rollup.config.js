@@ -20,7 +20,7 @@ const argv = minimist(process.argv.slice(2));
 const projectRoot = path.resolve(__dirname, '..');
 
 const BASE_CONFIG = {
-  input: 'src/vue-socials.ts',
+  input: 'src/vuetube.ts',
   plugins: {
     resolve: {
       extensions: ['.js', '.ts', '.vue'],
@@ -104,13 +104,12 @@ const BUILD_FORMATS = [];
 if (!argv.format || argv.format === 'esm') {
   const ESM_CONFIG = {
     ...BASE_CONFIG,
-    input: 'src/vue-socials-esm.ts',
+    input: 'src/vuetube.ts',
     external,
     output: {
       dir: 'dist/esm',
       format: 'esm',
       exports: 'named',
-      sourcemap: true,
       preserveModules: true,
     },
     plugins: [
@@ -123,7 +122,7 @@ if (!argv.format || argv.format === 'esm') {
       commonjs(),
       copy({
         targets: [
-          { src: 'src/vue-socials.d.ts', dest: 'dist/types' },
+          { src: 'src/vuetube.d.ts', dest: 'dist/types' },
         ],
       }),
     ],
@@ -138,13 +137,12 @@ if (!argv.format || argv.format === 'esm') {
 if (!argv.format || argv.format === 'es') {
   const ES_CONFIG = {
     ...BASE_CONFIG,
-    input: 'src/vue-socials-esm.ts',
+    input: 'src/vuetube.ts',
     external,
     output: {
-      file: 'dist/vue-socials.es.js',
+      file: 'dist/vuetube.es.js',
       format: 'esm',
       exports: 'named',
-      sourcemap: true,
     },
     plugins: [
       resolve(BASE_CONFIG.plugins.resolve),
@@ -169,10 +167,10 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: 'dist/vue-socials.cjs.js',
+      file: 'dist/vuetube.cjs.js',
       format: 'cjs',
-      name: 'VueSocials',
-      exports: 'auto',
+      name: 'VueTube',
+      exports: 'named',
       globals,
     },
     plugins: [
@@ -204,10 +202,10 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: 'dist/vue-socials.iife.js',
+      file: 'dist/vuetube.iife.js',
       format: 'iife',
-      name: 'VueSocials',
-      exports: 'auto',
+      name: 'VueTube',
+      exports: 'named',
       globals,
     },
     plugins: [

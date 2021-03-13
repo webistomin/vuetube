@@ -6,7 +6,7 @@
     "email": "webistomin@gmail.com",
     "url": "https://github.com/webistomin"
   },
-  "description": "A fast, lightweight, lazy load vue component acting as a thin layer over the YouTube IFrame Player API which render fast 🚀",
+  "description": "A fast, lightweight, lazyload vue component acting as a thin layer over the YouTube IFrame Player API which renders fast 🚀",
   "keywords": [
     "youtube",
     "youtube-iframe",
@@ -17,15 +17,26 @@
     "vue-youtube"
   ],
   "license": "MIT",
-  "main": "dist/vuetube.ssr.js",
+  "main": "dist/vuetube.cjs.js",
   "browser": "dist/vuetube.esm.js",
-  "module": "dist/vuetube.esm.js",
-  "unpkg": "dist/vuetube.min.js",
-  "types": "vuetube.d.ts",
+  "module": "dist/esm/vuetube.js",
+  "exports": {
+    ".": {
+      "browser": "./dist/vuetube.js",
+      "require": "./dist/vuetube.cjs.js",
+      "import": "./dist/esm/vuetube.js",
+      "default": "./dist/esm/vuetube.js"
+    },
+    "./": "./",
+    "./package.json": "./package.json"
+  },
+  "unpkg": "dist/vuetube.iife.js",
+  "jsdelivr": "dist/vuetube.iife.js",
+  "types": "dist/types/vuetube.d.ts",
   "files": [
-    "dist/*",
-    "vuetube.d.ts",
-    "../src/**/*.vue"
+    "dist",
+    "src",
+    "types"
   ],
   "reveal": true,
   "sideEffects": false,
@@ -48,6 +59,9 @@
     "tree-shake": "agadoo",
     "check-size": "size-limit",
     "release": "dotenv release-it --verbose"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.12"
   },
   "dependencies": {},
   "devDependencies": {
@@ -76,6 +90,7 @@
     "@vue/eslint-config-typescript": "^7.0.0",
     "agadoo": "^2.0.0",
     "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
     "dotenv-cli": "^4.0.0",
     "eslint": "^7.20.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
@@ -86,7 +101,6 @@
     "lint-staged": "^10.5.4",
     "lodash.findindex": "^4.6.0",
     "minimist": "^1.2.5",
-    "cross-env": "^7.0.3",
     "npm-run-all": "^4.1.5",
     "release-it": "^14.4.1",
     "rimraf": "^3.0.2",
@@ -95,13 +109,11 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-vue": "^5.1.9",
     "size-limit": "^4.9.2",
+    "tsc-alias": "^1.2.7",
     "typescript": "^4.2.2",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.6",
     "vue-template-compiler": "^2.6.12"
-  },
-  "peerDependencies": {
-    "vue": "^2.6.12"
   },
   "engines": {
     "node": ">= 14.15.4",
