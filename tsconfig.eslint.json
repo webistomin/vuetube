@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "types/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.vue",
+    "docs/**/*.ts",
+    "docs/**/*.js",
+    "docs/**/*.vue",
+    "build/**/*.ts",
+    "build/**/*.js",
+    "build/**/*.vue",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.js",
+    ".storybook/**/*.vue",
+    "scripts/**/*.ts",
+    ".eslintrc.js",
+    "lint-staged.config.js",
+    "husky.config.js",
+    "commitlint.config.js",
+    ".size-limit.js",
+    "babel.config.js"
+  ]
+}

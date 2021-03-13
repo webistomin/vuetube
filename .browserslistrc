@@ -1,0 +1,10 @@
+last 2 major version and >= 1%
+not dead
+not op_mini all
+Chrome >= 60
+Firefox >= 60
+not Edge < 79
+iOS >= 10
+Safari >= 10
+Android >= 6
+Explorer >= 11
