@@ -1,33 +1,15 @@
-import Vue, { VNode } from 'vue';
+import Vue, { PropType, VNode } from 'vue';
 import { createWarmLink } from '@/utils/createWarmLink';
-import { TISO639Codes } from '@/types/language-codes';
-import getSerialisedParams from '@/utils/getSerialisedParams';
+import { getStringifiedParams } from '@/utils/getStringifiedParams';
+import { loadYoutubeAPI } from '@/utils/loadYoutubeAPI';
+import { TImageLoading } from '@/types/image-loading';
+import { TThumbnailResolution } from '@/types/thumbnail-resolution';
 
-/**
- * @link https://developers.google.com/youtube/player_parameters#Parameters
- */
-export interface IPlayerParameters {
-  autoplay?: 0 | 1,
-  cc_lang_pref?: TISO639Codes;
-  cc_load_policy?: 0 | 1,
-  color?: 'red' | 'white';
-  controls?: 0 | 1;
-  disablekb?: 0 | 1;
-  enablejsapi?: 0 | 1;
-  end?: number;
-  fs?: 0 | 1;
-  hl?: TISO639Codes;
-  iv_load_policy?: 0 | 1;
-  list?: 'user_uploads' | 'playlist' | 'search';
-  listType?: 'user_uploads' | 'playlist' | 'search';
-  loop?: 0 | 1;
-  modestbranding?: 0 | 1;
-  origin?: 0 | 1;
-  playlist?: string;
-  playsinline?: 0 | 1;
-  rel?: 0 | 1;
-  start?: number;
-  widget_referrer?: string;
+declare global {
+  interface Window {
+    YT: YT.Player;
+    onYouTubeIframeAPIReady: () => void;
+  }
 }
 
 export default /* #__PURE__ */ Vue.extend({
@@ -38,14 +20,14 @@ export default /* #__PURE__ */ Vue.extend({
      * ID of YouTube video
      */
     videoId: {
-      type: String,
+      type: String as PropType<string>,
       required: true,
     },
     /**
      * Aspect ratio for iframe
      */
     ratio: {
-      type: Number,
+      type: Number as PropType<number>,
       default: 16 / 9,
     },
     /**
@@ -53,7 +35,7 @@ export default /* #__PURE__ */ Vue.extend({
      * By default video loaded from https://www.youtube-nocookie.com
      */
     enableCookies: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: false,
     },
     /**
@@ -61,43 +43,44 @@ export default /* #__PURE__ */ Vue.extend({
      * @link https://developers.google.com/youtube/player_parameters#Parameters
      */
     playerParameters: {
-      type: Object,
-      default: () => ({ autoplay: 2 }),
+      type: Object as PropType<YT.PlayerVars>,
+      default: () => ({ enablejsapi: 1 }),
     },
     /**
      * Disable warming up connections to origins that are in the critical path
      */
     disableWarming: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: false,
     },
     /**
      * Disable webp thumbnail
      */
     disableWebp: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: false,
     },
     /**
      * Alt attribute for image
      */
     imageAlt: {
-      type: String,
+      type: String as PropType<string>,
       default: '',
     },
     /**
      * Loading attribute for image
      */
     imageLoading: {
-      type: String,
+      type: String as PropType<TImageLoading>,
       default: 'lazy',
+      validator: (value) => ['lazy', 'eager', 'auto'].indexOf(value) !== -1,
     },
     /**
      * Thumbnail from YouTube API
      * @link https://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
      */
     resolution: {
-      type: String,
+      type: String as PropType<TThumbnailResolution>,
       default: 'sddefault',
       validator: (value) => ['maxresdefault', 'sddefault', 'hqdefault'].indexOf(value) !== -1,
     },
@@ -105,26 +88,31 @@ export default /* #__PURE__ */ Vue.extend({
      * Aria-label attribute for button
      */
     buttonLabel: {
-      type: String,
+      type: String as PropType<string>,
       default: 'Play video',
     },
     /**
      * Title attribute for iframe
      */
     iframeTitle: {
-      type: String,
+      type: String as PropType<string>,
       default: undefined,
     },
     /**
      * Allow attribute for iframe
      */
     iframeAllow: {
-      type: String,
+      type: String as PropType<string>,
       default: 'accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture',
     },
   },
 
-  data() {
+  data(): {
+    isConnectionWarmed: boolean;
+    isPlayed: boolean;
+    isLoaded: boolean;
+    player: YT.Player | null
+  } {
     return {
       /**
        * Is preconnect links already appended to the head
@@ -138,6 +126,10 @@ export default /* #__PURE__ */ Vue.extend({
        * Is video loaded
        */
       isLoaded: false,
+      /**
+       * Player instance
+       */
+      player: null,
     };
   },
 
@@ -149,6 +141,24 @@ export default /* #__PURE__ */ Vue.extend({
       const { enableCookies } = this;
 
       return enableCookies ? 'https://www.youtube.com' : 'https://www.youtube-nocookie.com';
+    },
+    /**
+     * Calculate iframe url with params
+     */
+    iframeUrl(): string {
+      const { playerParameters, host, videoId } = this;
+      const DEFAULT_PARAMS: YT.PlayerVars = {
+        autoplay: 1,
+      };
+      const concatParams = Object.assign(
+        {},
+        DEFAULT_PARAMS,
+        playerParameters,
+      );
+
+      const serialisedParams = getStringifiedParams(concatParams);
+
+      return `${host}/embed/${videoId}${serialisedParams}`;
     },
     /**
      * Wrapper component
@@ -317,15 +327,16 @@ export default /* #__PURE__ */ Vue.extend({
 
       return $scopedSlots.icon?.({}) || PLAY_BTN_ICON_COMPONENT;
     },
-
+    /**
+     * Iframe component
+     */
     iframeComponent(): VNode {
       const {
         $createElement,
-        videoId,
         iframeTitle,
         onIframeLoad,
         iframeAllow,
-        playerParameters,
+        iframeUrl,
       } = this;
 
       const IFRAME_COMPONENT = $createElement(
@@ -336,10 +347,9 @@ export default /* #__PURE__ */ Vue.extend({
             'vuetube__iframe',
           ],
           attrs: {
-            src: `https://www.youtube-nocookie.com/embed/${videoId}${getSerialisedParams(Object.assign({}, playerParameters, { autoplay: 1 }))}`,
+            src: iframeUrl,
             allow: iframeAllow,
             title: iframeTitle,
-            allowfullscreen: true,
           },
           on: {
             load: onIframeLoad,
@@ -377,18 +387,64 @@ export default /* #__PURE__ */ Vue.extend({
 
       this.isConnectionWarmed = true;
     },
-
+    /**
+     * Run video
+     */
     playVideo(): void {
       this.isPlayed = true;
     },
-
+    /**
+     * Run after iframe has been loaded
+     */
     onIframeLoad(): void {
+      const {
+        $refs,
+        playerParameters,
+        initAPI,
+      } = this;
+
       this.isLoaded = true;
-      const el = this.$refs.iframe as HTMLIFrameElement;
+
+      const el = $refs.iframe as HTMLIFrameElement;
       el.focus();
+
+      const SHOULD_LOAD_API = playerParameters.enablejsapi;
+
+      if (SHOULD_LOAD_API) {
+        initAPI();
+      }
+    },
+
+    initAPI() {
+      const {
+        $refs,
+        videoId,
+        playerParameters,
+      } = this;
+
+      const el = $refs.iframe as HTMLIFrameElement;
+
+      window.onYouTubeIframeAPIReady = () => {
+        const player = new window.YT.Player(el, {
+          videoId,
+          playerVars: playerParameters,
+          events: {
+            onReady: ($event) => this.$emit('player:ready', $event),
+            onStateChange: ($event) => this.$emit('player:statechange', $event),
+            onPlaybackQualityChange: ($event) => this.$emit('player:playbackqualitychange', $event),
+            onPlaybackRateChange: ($event) => this.$emit('player:playbackratechange', $event),
+          },
+        });
+
+        this.player = player;
+      };
+
+      loadYoutubeAPI();
     },
   },
-
+  /**
+   * Render component
+   */
   render(): VNode {
     return this.boxComponent;
   },

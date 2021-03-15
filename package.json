@@ -65,7 +65,9 @@
   "peerDependencies": {
     "vue": "^2.6.12"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/youtube": "0.0.42"
+  },
   "devDependencies": {
     "@babel/core": "^7.13.8",
     "@babel/plugin-proposal-optional-chaining": "^7.13.8",

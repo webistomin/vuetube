@@ -19,14 +19,18 @@ const Template: Story = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { VueTube },
   methods: {
-    onClose: action('emit close'),
-    onOpen: action('emit open'),
+    onStateChange: action('emit onStateChange'),
+    onReady: action('emit onReady'),
     onBlock: action('emit block'),
     onFocus: action('emit focus'),
   },
   template: `
     <div class="story-vuetube-container">
-      <vue-tube v-bind="$props">
+      <vue-tube
+        v-bind="$props"
+        @player:statechange="onStateChange"
+        @player:ready="onReady"
+      >
       </vue-tube>
     </div>
 `,

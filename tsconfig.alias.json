@@ -17,9 +17,10 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-    "node",
-    "vue"
-  ],
+      "node",
+      "vue",
+      "youtube"
+    ],
     "paths": {
     "@/*": [
       "dist/types"
