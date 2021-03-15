@@ -1,0 +1,10 @@
+.story-vuetube-container {
+  width: 100%;
+  max-width: 512px;
+}
+
+.story-vuetube-container .vuetube,
+.story-vuetube-container .story-vuetube-iframe {
+  width: 100%;
+  height: 100%;
+}

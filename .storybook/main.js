@@ -9,6 +9,7 @@ module.exports = {
     '../src/**/*.stories.@(js|ts)',
   ],
   addons: [
+    '@storybook/addon-controls',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-a11y',

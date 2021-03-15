@@ -19,6 +19,7 @@
     "husky.config.js",
     "commitlint.config.js",
     ".size-limit.js",
-    "babel.config.js"
+    "babel.config.js",
+    "stylelint.config.js",
   ]
 }
