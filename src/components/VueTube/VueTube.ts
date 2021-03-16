@@ -1,9 +1,17 @@
-import Vue, { PropType, VNode } from 'vue';
-import { createWarmLink } from '@/utils/createWarmLink';
-import { getStringifiedParams } from '@/utils/getStringifiedParams';
-import { loadYoutubeAPI } from '@/utils/loadYoutubeAPI';
+import {
+  DEFAULT_HOST, GOOGLE_ADS_URL, GOOGLE_FONTS_URL, GOOGLE_URL, GSTATIC_URL,
+  NO_COOKIES_HOST,
+  PLAYLIST_VIDEO_SRC,
+  SINGLE_VIDEO_SRC, YOUTUBE_API_URL, YT3_URL, YTIMG_URL,
+} from '@/utils/constants';
+import { createWarmLink } from '@/helpers/createWarmLink';
+import { getStringifiedParams } from '@/helpers/getStringifiedParams';
+import { loadYoutubeAPI } from '@/helpers/loadYoutubeAPI';
+import { getNormalizeSlot } from '@/helpers/getNormalizedSlot';
 import { TImageLoading } from '@/types/image-loading';
 import { TThumbnailResolution } from '@/types/thumbnail-resolution';
+import Vue, { PropType, VNode } from 'vue';
+import {isFunction} from "@/helpers/inspect";
 
 declare global {
   interface Window {
@@ -17,22 +25,29 @@ export default /* #__PURE__ */ Vue.extend({
 
   props: {
     /**
-     * ID of YouTube video
+     * The ID of YouTube video
      */
     videoId: {
       type: String as PropType<string>,
       required: true,
     },
     /**
-     * Aspect ratio for iframe
+     * Should embed a playlist of several videos
      */
-    ratio: {
+    isPlaylist: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
+    /**
+     * The aspect ratio for iframe
+     */
+    aspectRatio: {
       type: Number as PropType<number>,
       default: 16 / 9,
     },
     /**
      * Change video host to www.youtube.com
-     * By default video loaded from https://www.youtube-nocookie.com
+     * By default, video loaded from https://www.youtube-nocookie.com
      */
     enableCookies: {
       type: Boolean as PropType<boolean>,
@@ -42,9 +57,9 @@ export default /* #__PURE__ */ Vue.extend({
      * Parameters that are available in the YouTube embedded player.
      * @link https://developers.google.com/youtube/player_parameters#Parameters
      */
-    playerParameters: {
+    playerVars: {
       type: Object as PropType<YT.PlayerVars>,
-      default: () => ({ enablejsapi: 1 }),
+      default: () => ({}),
     },
     /**
      * Disable warming up connections to origins that are in the critical path
@@ -69,6 +84,7 @@ export default /* #__PURE__ */ Vue.extend({
     },
     /**
      * Loading attribute for image
+     * @link https://caniuse.com/loading-lazy-attr
      */
     imageLoading: {
       type: String as PropType<TImageLoading>,
@@ -77,12 +93,12 @@ export default /* #__PURE__ */ Vue.extend({
     },
     /**
      * Thumbnail from YouTube API
-     * @link https://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
+     * @link https://stackoverflow.com/a/18400445/13374604
      */
     resolution: {
       type: String as PropType<TThumbnailResolution>,
       default: 'sddefault',
-      validator: (value) => ['maxresdefault', 'sddefault', 'hqdefault'].indexOf(value) !== -1,
+      validator: (value) => ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'].indexOf(value) !== -1,
     },
     /**
      * Aria-label attribute for button
@@ -115,7 +131,7 @@ export default /* #__PURE__ */ Vue.extend({
   } {
     return {
       /**
-       * Is preconnect links already appended to the head
+       * Are preconnect links already appended to the head
        */
       isConnectionWarmed: false,
       /**
@@ -132,6 +148,17 @@ export default /* #__PURE__ */ Vue.extend({
       player: null,
     };
   },
+  /**
+   * Clear out the reference to the destroyed player
+   */
+  beforeDestroy() {
+    const { player } = this;
+
+    if (player !== null && typeof player.destroy === 'function') {
+      player.destroy();
+      this.player = null;
+    }
+  },
 
   computed: {
     /**
@@ -140,25 +167,55 @@ export default /* #__PURE__ */ Vue.extend({
     host(): string {
       const { enableCookies } = this;
 
-      return enableCookies ? 'https://www.youtube.com' : 'https://www.youtube-nocookie.com';
+      return enableCookies ? DEFAULT_HOST : NO_COOKIES_HOST;
     },
     /**
      * Calculate iframe url with params
      */
     iframeUrl(): string {
-      const { playerParameters, host, videoId } = this;
-      const DEFAULT_PARAMS: YT.PlayerVars = {
+      const {
+        playerVars,
+        host,
+        videoId,
+        isPlaylist,
+      } = this;
+
+      const DEFAULT_PARAMS = {
         autoplay: 1,
       };
-      const concatParams = Object.assign(
+
+      const CONCAT_PARAMS = Object.assign(
         {},
         DEFAULT_PARAMS,
-        playerParameters,
+        playerVars,
       );
 
-      const serialisedParams = getStringifiedParams(concatParams);
+      if (isPlaylist) {
+        const STRINGIFIED_PLAYLIST_PARAMS = getStringifiedParams(Object.assign(
+          {},
+          CONCAT_PARAMS,
+          { list: videoId },
+        ));
 
-      return `${host}/embed/${videoId}${serialisedParams}`;
+        return PLAYLIST_VIDEO_SRC
+          .replace('@h', host)
+          .replace('@params', STRINGIFIED_PLAYLIST_PARAMS);
+      }
+
+      const STRINGIFIED_SINGLE_VIDEO_PARAMS = getStringifiedParams(CONCAT_PARAMS);
+      return SINGLE_VIDEO_SRC
+        .replace('@h', host)
+        .replace('@id', videoId)
+        .replace('@params', STRINGIFIED_SINGLE_VIDEO_PARAMS);
+    },
+    /**
+     * Calculate padding for aspect ratio
+     * @link https://css-tricks.com/aspect-ratio-boxes/
+     */
+    calculatedAspectRatioPadding(): string {
+      const { aspectRatio } = this;
+
+      return `${100 / aspectRatio}%`;
     },
     /**
      * Wrapper component
@@ -166,12 +223,13 @@ export default /* #__PURE__ */ Vue.extend({
     boxComponent(): VNode {
       const {
         $createElement,
-        ratio,
+        calculatedAspectRatioPadding,
         isPlayed,
         iframeComponent,
         thumbnailComponent,
         playBtnComponent,
         warmConnections,
+        playVideo,
       } = this;
 
       const BOX_COMPONENT = $createElement(
@@ -179,6 +237,7 @@ export default /* #__PURE__ */ Vue.extend({
         {
           on: {
             '~pointerover': warmConnections,
+            click: playVideo,
           },
           class: [
             'vuetube',
@@ -186,11 +245,22 @@ export default /* #__PURE__ */ Vue.extend({
               'vuetube--played': isPlayed,
             },
           ],
-          style: {
-            '--vuetube-aspect-ratio': ratio,
-          },
         },
-        [isPlayed ? iframeComponent : thumbnailComponent, playBtnComponent],
+        [
+          $createElement(
+            'div',
+            {
+              class: 'vuetube__box',
+              style: {
+                'padding-bottom': calculatedAspectRatioPadding,
+              },
+            },
+            [
+              isPlayed ? iframeComponent : thumbnailComponent,
+              playBtnComponent,
+            ],
+          ),
+        ],
       );
 
       return BOX_COMPONENT;
@@ -200,6 +270,7 @@ export default /* #__PURE__ */ Vue.extend({
      */
     thumbnailComponent(): VNode | VNode[] {
       const {
+        $slots,
         $scopedSlots,
         $createElement,
         resolution,
@@ -254,7 +325,7 @@ export default /* #__PURE__ */ Vue.extend({
         ],
       );
 
-      return $scopedSlots?.thumbnail?.({}) || THUMBNAIL_COMPONENT;
+      return getNormalizeSlot('thumbnail', {}, $slots, $scopedSlots) || THUMBNAIL_COMPONENT;
     },
     /**
      * Button component
@@ -281,7 +352,9 @@ export default /* #__PURE__ */ Vue.extend({
             click: playVideo,
           },
         },
-        [playBtnIconComponent],
+        [
+          playBtnIconComponent,
+        ],
       );
 
       return PLAY_BTN_COMPONENT;
@@ -290,7 +363,11 @@ export default /* #__PURE__ */ Vue.extend({
      * Icon component
      */
     playBtnIconComponent(): VNode | VNode[] {
-      const { $createElement, $scopedSlots } = this;
+      const {
+        $createElement,
+        $slots,
+        $scopedSlots,
+      } = this;
 
       const PLAY_BTN_ICON_COMPONENT = $createElement(
         'svg',
@@ -325,7 +402,7 @@ export default /* #__PURE__ */ Vue.extend({
         ],
       );
 
-      return $scopedSlots.icon?.({}) || PLAY_BTN_ICON_COMPONENT;
+      return getNormalizeSlot('icon', {}, $slots, $scopedSlots) || PLAY_BTN_ICON_COMPONENT;
     },
     /**
      * Iframe component
@@ -366,24 +443,73 @@ export default /* #__PURE__ */ Vue.extend({
      * Add preconnect links
      */
     warmConnections(): void {
-      const { disableWarming, enableCookies, isConnectionWarmed } = this;
+      const {
+        disableWarming,
+        enableCookies,
+        isConnectionWarmed,
+      } = this;
 
       if (disableWarming || isConnectionWarmed) {
         return;
       }
 
+      const DEFAULT_PRECONNECTS = [
+        {
+          href: DEFAULT_HOST,
+          crossorigin: false,
+        },
+        {
+          href: GOOGLE_ADS_URL,
+          crossorigin: false,
+        },
+      ];
+
+      const NO_COOKIES_PRECONNECTS = [
+        {
+          href: NO_COOKIES_HOST,
+          crossorigin: false,
+        },
+      ];
+
+      const COMMON_PRECONNECTS = [
+        {
+          href: GOOGLE_FONTS_URL,
+          crossorigin: true,
+        },
+        {
+          href: YTIMG_URL,
+          crossorigin: false,
+        },
+        {
+          href: GOOGLE_URL,
+          crossorigin: false,
+        },
+        {
+          href: YT3_URL,
+          crossorigin: false,
+        },
+        {
+          href: GSTATIC_URL,
+          crossorigin: false,
+        },
+      ];
+
+      let FINAL_PRECONNECTS = [];
+
+      const preconnects = Array.from(document.querySelectorAll('link[rel=preconnect]')) as HTMLLinkElement[];
+      const preconnectedURLs = preconnects.map((link) => link.href);
+
       if (enableCookies) {
-        createWarmLink('preconnect', 'https://www.youtube.com');
-        createWarmLink('preconnect', 'https://googleads.g.doubleclick.net');
+        FINAL_PRECONNECTS = DEFAULT_PRECONNECTS.concat(COMMON_PRECONNECTS);
       } else {
-        createWarmLink('preconnect', 'https://www.youtube-nocookie.com');
+        FINAL_PRECONNECTS = NO_COOKIES_PRECONNECTS.concat(COMMON_PRECONNECTS);
       }
 
-      createWarmLink('preconnect', 'https://fonts.gstatic.com', true);
-      createWarmLink('preconnect', 'https://i.ytimg.com');
-      createWarmLink('preconnect', 'https://google.com');
-      createWarmLink('preconnect', 'https://yt3.ggpht.com');
-      createWarmLink('preconnect', 'https://www.gstatic.com');
+      const FILTERERED_PRECONNECTS = FINAL_PRECONNECTS.filter((preconnect) => preconnectedURLs.indexOf(`${preconnect.href}/`) === -1);
+
+      FILTERERED_PRECONNECTS.forEach((preconnect) => {
+        createWarmLink(preconnect.href, preconnect.crossorigin);
+      });
 
       this.isConnectionWarmed = true;
     },
@@ -392,6 +518,8 @@ export default /* #__PURE__ */ Vue.extend({
      */
     playVideo(): void {
       this.isPlayed = true;
+
+      this.$emit('player:play');
     },
     /**
      * Run after iframe has been loaded
@@ -399,7 +527,7 @@ export default /* #__PURE__ */ Vue.extend({
     onIframeLoad(): void {
       const {
         $refs,
-        playerParameters,
+        playerVars,
         initAPI,
       } = this;
 
@@ -408,44 +536,69 @@ export default /* #__PURE__ */ Vue.extend({
       const el = $refs.iframe as HTMLIFrameElement;
       el.focus();
 
-      const SHOULD_LOAD_API = playerParameters.enablejsapi;
+      // @ts-expect-error check user vars
+      const SHOULD_LOAD_API = playerVars.enablejsapi === 1;
 
       if (SHOULD_LOAD_API) {
         initAPI();
       }
+
+      this.$emit('player:load');
     },
 
     initAPI() {
+      if (window.YT && isFunction(window.YT.Player)) {
+        this.initAPIPlayer();
+      } else {
+        const prevOnYouTubeIframeAPIReady = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+          if (isFunction(prevOnYouTubeIframeAPIReady)) {
+            prevOnYouTubeIframeAPIReady();
+          }
+
+          this.initAPIPlayer();
+        };
+
+        const scripts = Array.from(document.getElementsByTagName('script'));
+        const isLoaded = scripts.some((script) => script.src === YOUTUBE_API_URL);
+
+        if (!isLoaded) {
+          loadYoutubeAPI();
+        }
+      }
+    },
+
+    initAPIPlayer() {
       const {
         $refs,
         videoId,
-        playerParameters,
+        playerVars,
       } = this;
 
       const el = $refs.iframe as HTMLIFrameElement;
 
-      window.onYouTubeIframeAPIReady = () => {
-        const player = new window.YT.Player(el, {
-          videoId,
-          playerVars: playerParameters,
-          events: {
-            onReady: ($event) => this.$emit('player:ready', $event),
-            onStateChange: ($event) => this.$emit('player:statechange', $event),
-            onPlaybackQualityChange: ($event) => this.$emit('player:playbackqualitychange', $event),
-            onPlaybackRateChange: ($event) => this.$emit('player:playbackratechange', $event),
-          },
-        });
+      const player = new window.YT.Player(el, {
+        videoId,
+        playerVars,
+        events: {
+          onReady: ($event) => this.$emit('player:ready', $event),
+          onStateChange: ($event) => this.$emit('player:statechange', $event),
+          onPlaybackQualityChange: ($event) => this.$emit('player:playbackqualitychange', $event),
+          onPlaybackRateChange: ($event) => this.$emit('player:playbackratechange', $event),
+          onError: ($event) => this.$emit('player:error', $event),
+          onApiChange: ($event) => this.$emit('player:apichange', $event),
+        },
+      });
 
-        this.player = player;
-      };
-
-      loadYoutubeAPI();
+      this.player = player;
     },
   },
   /**
    * Render component
    */
   render(): VNode {
-    return this.boxComponent;
+    const { boxComponent } = this;
+
+    return boxComponent;
   },
 });

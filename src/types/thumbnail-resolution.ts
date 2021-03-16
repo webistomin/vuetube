@@ -1,1 +1,1 @@
-export type TThumbnailResolution = 'maxresdefault' | 'sddefault' | 'hqdefault';
+export type TThumbnailResolution = 'maxresdefault' | 'sddefault' | 'hqdefault' | 'mqdefault' | 'default';
