@@ -81,6 +81,7 @@ const BASE_CONFIG = {
           '@babel/preset-env',
           {
             targets: ES_BROWSERSLIST,
+            exclude: ['@babel/plugin-transform-typeof-symbol'],
           },
         ],
       ],
@@ -122,7 +123,11 @@ if (!argv.format || argv.format === 'esm') {
       commonjs(),
       copy({
         targets: [
-          { src: 'src/vuetube.d.ts', dest: 'dist/types' },
+          {
+            src: 'src/lib.d.ts',
+            dest: 'dist/types',
+            rename: (name, extension) => `vuetube.d.${extension}`,
+          },
         ],
       }),
     ],

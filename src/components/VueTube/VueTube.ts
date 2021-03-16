@@ -1,5 +1,9 @@
 import {
-  DEFAULT_HOST, GOOGLE_ADS_URL, GOOGLE_FONTS_URL, GOOGLE_URL, GSTATIC_URL,
+  DEFAULT_HOST,
+  GOOGLE_ADS_URL,
+  GOOGLE_FONTS_URL,
+  GOOGLE_URL,
+  GSTATIC_URL,
   NO_COOKIES_HOST,
   PLAYLIST_VIDEO_SRC,
   SINGLE_VIDEO_SRC, YOUTUBE_API_URL, YT3_URL, YTIMG_URL,
@@ -8,10 +12,10 @@ import { createWarmLink } from '@/helpers/createWarmLink';
 import { getStringifiedParams } from '@/helpers/getStringifiedParams';
 import { loadYoutubeAPI } from '@/helpers/loadYoutubeAPI';
 import { getNormalizeSlot } from '@/helpers/getNormalizedSlot';
-import { TImageLoading } from '@/types/image-loading';
-import { TThumbnailResolution } from '@/types/thumbnail-resolution';
+import { isFunction } from '@/helpers/inspect';
+import { TImageLoading } from '@/types/imageLoading';
+import { TThumbnailResolution } from '@/types/thumbnailResolution';
 import Vue, { PropType, VNode } from 'vue';
-import {isFunction} from "@/helpers/inspect";
 
 declare global {
   interface Window {

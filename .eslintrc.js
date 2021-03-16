@@ -24,5 +24,5 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'prefer-object-spread': 'off',
   },
-  ignorePatterns: ['!.*', 'src/vuetube.d.ts'],
+  ignorePatterns: ['!.*'],
 };
