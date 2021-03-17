@@ -5,10 +5,6 @@ export const DEFAULT_HOST = 'https://www.youtube.com';
 
 export const NO_COOKIES_HOST = 'https://www.youtube-nocookie.com';
 
-export const SINGLE_VIDEO_SRC = '@h/embed/@id@params';
-
-export const PLAYLIST_VIDEO_SRC = '@h/embed/videoseries@params';
-
 /**
  * Origins that are in the critical path
  */

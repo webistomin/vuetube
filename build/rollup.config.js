@@ -190,8 +190,8 @@ if (!argv.format || argv.format === 'cjs') {
         },
       }),
       ...BASE_CONFIG.plugins.postVue,
-      babel(BASE_CONFIG.plugins.babel),
       commonjs(),
+      babel(BASE_CONFIG.plugins.babel),
     ],
   };
 

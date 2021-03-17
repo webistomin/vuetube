@@ -5,8 +5,9 @@ import {
   GOOGLE_URL,
   GSTATIC_URL,
   NO_COOKIES_HOST,
-  PLAYLIST_VIDEO_SRC,
-  SINGLE_VIDEO_SRC, YOUTUBE_API_URL, YT3_URL, YTIMG_URL,
+  YOUTUBE_API_URL,
+  YT3_URL,
+  YTIMG_URL,
 } from '@/utils/constants';
 import { createWarmLink } from '@/helpers/createWarmLink';
 import { getStringifiedParams } from '@/helpers/getStringifiedParams';
@@ -201,16 +202,11 @@ export default /* #__PURE__ */ Vue.extend({
           { list: videoId },
         ));
 
-        return PLAYLIST_VIDEO_SRC
-          .replace('@h', host)
-          .replace('@params', STRINGIFIED_PLAYLIST_PARAMS);
+        return `${host}/embed/videoseries${STRINGIFIED_PLAYLIST_PARAMS}`;
       }
 
       const STRINGIFIED_SINGLE_VIDEO_PARAMS = getStringifiedParams(CONCAT_PARAMS);
-      return SINGLE_VIDEO_SRC
-        .replace('@h', host)
-        .replace('@id', videoId)
-        .replace('@params', STRINGIFIED_SINGLE_VIDEO_PARAMS);
+      return `${host}/embed/${videoId}${STRINGIFIED_SINGLE_VIDEO_PARAMS}`;
     },
     /**
      * Calculate padding for aspect ratio
@@ -241,7 +237,7 @@ export default /* #__PURE__ */ Vue.extend({
         {
           on: {
             '~pointerover': warmConnections,
-            click: playVideo,
+            '~click': playVideo,
           },
           class: [
             'vuetube',
@@ -284,8 +280,8 @@ export default /* #__PURE__ */ Vue.extend({
         imageLoading,
       } = this;
 
-      const webp = `https://i.ytimg.com/vi_webp/${videoId}/${resolution}.webp`;
-      const jpg = `https://i.ytimg.com/vi/${videoId}/${resolution}.jpg`;
+      const webp = `${YTIMG_URL}/vi_webp/${videoId}/${resolution}.webp`;
+      const jpg = `${YTIMG_URL}/vi/${videoId}/${resolution}.jpg`;
 
       const THUMBNAIL_COMPONENT = $createElement(
         'picture',
@@ -353,7 +349,7 @@ export default /* #__PURE__ */ Vue.extend({
             'aria-label': buttonLabel,
           },
           on: {
-            click: playVideo,
+            '~click': playVideo,
           },
         },
         [
@@ -458,50 +454,26 @@ export default /* #__PURE__ */ Vue.extend({
       }
 
       const DEFAULT_PRECONNECTS = [
-        {
-          href: DEFAULT_HOST,
-          crossorigin: false,
-        },
-        {
-          href: GOOGLE_ADS_URL,
-          crossorigin: false,
-        },
+        DEFAULT_HOST,
+        GOOGLE_ADS_URL,
       ];
 
       const NO_COOKIES_PRECONNECTS = [
-        {
-          href: NO_COOKIES_HOST,
-          crossorigin: false,
-        },
+        NO_COOKIES_HOST,
       ];
 
       const COMMON_PRECONNECTS = [
-        {
-          href: GOOGLE_FONTS_URL,
-          crossorigin: true,
-        },
-        {
-          href: YTIMG_URL,
-          crossorigin: false,
-        },
-        {
-          href: GOOGLE_URL,
-          crossorigin: false,
-        },
-        {
-          href: YT3_URL,
-          crossorigin: false,
-        },
-        {
-          href: GSTATIC_URL,
-          crossorigin: false,
-        },
+        GOOGLE_FONTS_URL,
+        YTIMG_URL,
+        GOOGLE_URL,
+        YT3_URL,
+        GSTATIC_URL,
       ];
 
       let FINAL_PRECONNECTS = [];
 
-      const preconnects = Array.from(document.querySelectorAll('link[rel=preconnect]')) as HTMLLinkElement[];
-      const preconnectedURLs = preconnects.map((link) => link.href);
+      const PRECONNECTS = Array.from(document.querySelectorAll('link[rel=preconnect]')) as HTMLLinkElement[];
+      const PRECONNECTED_URLS = PRECONNECTS.map((link) => link.href);
 
       if (enableCookies) {
         FINAL_PRECONNECTS = DEFAULT_PRECONNECTS.concat(COMMON_PRECONNECTS);
@@ -509,10 +481,10 @@ export default /* #__PURE__ */ Vue.extend({
         FINAL_PRECONNECTS = NO_COOKIES_PRECONNECTS.concat(COMMON_PRECONNECTS);
       }
 
-      const FILTERERED_PRECONNECTS = FINAL_PRECONNECTS.filter((preconnect) => preconnectedURLs.indexOf(`${preconnect.href}/`) === -1);
+      const FILTERED_PRECONNECTS = FINAL_PRECONNECTS.filter((preconnect) => PRECONNECTED_URLS.indexOf(`${preconnect}/`) === -1);
 
-      FILTERERED_PRECONNECTS.forEach((preconnect) => {
-        createWarmLink(preconnect.href, preconnect.crossorigin);
+      FILTERED_PRECONNECTS.forEach((preconnect) => {
+        createWarmLink(preconnect, preconnect === GOOGLE_FONTS_URL);
       });
 
       this.isConnectionWarmed = true;
@@ -549,8 +521,11 @@ export default /* #__PURE__ */ Vue.extend({
 
       this.$emit('player:load');
     },
-
-    initAPI() {
+    /**
+     * Init YouTube API
+     * @link https://developers.google.com/youtube/iframe_api_reference
+     */
+    initAPI(): void {
       if (window.YT && isFunction(window.YT.Player)) {
         this.initAPIPlayer();
       } else {
@@ -571,8 +546,11 @@ export default /* #__PURE__ */ Vue.extend({
         }
       }
     },
-
-    initAPIPlayer() {
+    /**
+     * Build player with YouTube API
+     * @link https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
+     */
+    initAPIPlayer(): void {
       const {
         $refs,
         videoId,
@@ -585,12 +563,12 @@ export default /* #__PURE__ */ Vue.extend({
         videoId,
         playerVars,
         events: {
-          onReady: ($event) => this.$emit('player:ready', $event),
-          onStateChange: ($event) => this.$emit('player:statechange', $event),
-          onPlaybackQualityChange: ($event) => this.$emit('player:playbackqualitychange', $event),
-          onPlaybackRateChange: ($event) => this.$emit('player:playbackratechange', $event),
-          onError: ($event) => this.$emit('player:error', $event),
-          onApiChange: ($event) => this.$emit('player:apichange', $event),
+          onReady: (e) => this.$emit('player:ready', e),
+          onStateChange: (e) => this.$emit('player:statechange', e),
+          onPlaybackQualityChange: (e) => this.$emit('player:playbackqualitychange', e),
+          onPlaybackRateChange: (e) => this.$emit('player:playbackratechange', e),
+          onError: (e) => this.$emit('player:error', e),
+          onApiChange: (e) => this.$emit('player:apichange', e),
         },
       });
 
