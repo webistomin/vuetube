@@ -8,3 +8,27 @@
   width: 100%;
   height: 100%;
 }
+
+.story-vuetube-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.story-vuetube-aspect-ratio {
+  position: relative;
+}
+
+.story-vuetube-aspect-ratio::before {
+  display: block;
+  padding-bottom: 56.25%;
+  content: '';
+}
+
+.story-vuetube-aspect-ratio .story-vuetube-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

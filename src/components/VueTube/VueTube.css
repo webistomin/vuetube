@@ -35,6 +35,7 @@
   height: inherit;
   object-fit: cover;
   object-position: center;
+  vertical-align: top;
 }
 
 .vuetube__button {
