@@ -5,6 +5,7 @@
     "src/**/*.ts",
     "src/**/*.js",
     "src/**/*.vue",
+    "test/**/*.ts",
     "docs/**/*.ts",
     "docs/**/*.js",
     "docs/**/*.vue",
@@ -21,5 +22,6 @@
     ".size-limit.js",
     "babel.config.js",
     "stylelint.config.js",
+    "jest.config.js",
   ]
 }

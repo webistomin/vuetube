@@ -17,6 +17,7 @@
     "types": [
       "node",
       "vue",
+      "jest",
       "youtube"
     ],
     "paths": {
