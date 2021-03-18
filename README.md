@@ -38,6 +38,7 @@
   <a href="#key-features-">Key Features</a> •
   <a href="#installation-">Installation</a> •
   <a href="#documentation-">Documentation</a> •
+  <a href="#faq-">FAQ</a> •
   <a href="#browsers-support-">Browsers support</a> •
   <a href="#license-">License</a>  •
   <a href="#inspiration-">Inspiration</a>  •
@@ -332,6 +333,75 @@ Browse [online documentation here](https://vuetube.vercel.app/)
     <td>This event is fired to indicate that the player has loaded (or unloaded) a module with exposed API methods. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onApiChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
 </table>
+
+## FAQ 🗯️
+
+### How to get access to player API?
+
+You need to pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object. Then subscribe on <code>player:ready</code> event.
+
+```vue
+  <template>
+    <vue-tube @player:ready="onPlayerReady"></vue-tube>
+  </template>
+
+  <script>
+    export default {
+      data() {
+        return {
+          playerInstance: null,
+        }
+      },
+      
+      methods: {
+        onPlayerReady(event) {
+          this.playerInstance = event.target
+        }
+      }
+    }
+  </script>
+```
+
+Now you have a player instance in the `playerInstance`. You can do whatever you want with video. 
+
+`this.playerInstance.playVideo()`, `this.playerInstance.pauseVideo()` etc. All methods can be found [here](https://developers.google.com/youtube/iframe_api_reference#Playback_controls).
+
+### How to use my own play button?
+
+You can pass your button through `icon` slot.
+
+```vue
+  <template>
+    <vue-tube>
+      <template #icon>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24">
+          <path
+            fill="#fff"
+            d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-3 17v-10l9 5.146-9 4.854z"
+          />
+        </svg>
+      </template>
+    </vue-tube>
+  </template>
+```
+
+### How to use my own thumbnail?
+
+You can pass your thumbnail through `thumbnail` slot.
+
+```vue
+  <template>
+    <vue-tube>
+      <template #thumbnail>
+        <img src="#" alt="">
+      </template>
+    </vue-tube>
+  </template>
+```
 
 ## Browsers support 🌎
 
