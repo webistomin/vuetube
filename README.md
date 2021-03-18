@@ -8,7 +8,7 @@
 <p align="center">
   Vue component acting as a thin layer over the YouTube IFrame Player API which renders fast.
   <br/>
-  <a href="https://vuetube.vercel.app/"><strong>Explore website »</strong></a>
+  <a href="https://vuetube-ten.vercel.app/"><strong>Explore website »</strong></a>
 </p>
 
 <br/>
@@ -38,7 +38,7 @@
   <a href="#key-features-">Key Features</a> •
   <a href="#installation-">Installation</a> •
   <a href="#documentation-">Documentation</a> •
-  <a href="#faq-">FAQ</a> •
+  <a href="#faq-%EF%B8%8F">FAQ</a> •
   <a href="#browsers-support-">Browsers support</a> •
   <a href="#license-">License</a>  •
   <a href="#inspiration-">Inspiration</a>  •
@@ -90,7 +90,7 @@ Vue.component('VueTube', VueTube)
 
 ## Documentation 🤗
 
-Browse [online documentation here](https://vuetube.vercel.app/)
+Browse [online documentation here](https://vuetube-ten.vercel.app/)
 
 ### Props
 
