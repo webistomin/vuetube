@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VueTube.vue match snapshot when iframe is loaded 1`] = `
+<div class="vuetube vuetube--played">
+  <div class="vuetube__box" style="padding-bottom: 56.25%;"><iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1" allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" title="Rick Astley - Never Gonna Give You Up (Video)" class="vuetube__iframe"></iframe><button type="button" aria-label="Play video" class="vuetube__button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48" class="vuetube__icon" aria-hidden="true" focusable="false">
+        <path class="vuetube__icon-bg" d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"></path>
+        <path class="vuetube__icon-triangle" d="M45 24L27 14v20"></path>
+      </svg></button></div>
+</div>
+`;
+
+exports[`VueTube.vue match snapshot when using custom button icon 1`] = `
+<div class="vuetube">
+  <div class="vuetube__box" style="padding-bottom: 56.25%;">
+    <picture class="vuetube__thumbnail">
+      <source srcset="https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/sddefault.webp" type="image/webp">
+      <source srcset="https://i.ytimg.com/vi/dQw4w9WgXcQ/sddefault.jpg" type="image/jpeg"><img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/sddefault.jpg" alt="Rick Astley" loading="lazy" class="vuetube__image">
+    </picture><button type="button" aria-label="Play video" class="vuetube__button"><svg class="my-custom-icon"></svg></button>
+  </div>
+</div>
+`;
+
+exports[`VueTube.vue match snapshot when using custom thumbnail 1`] = `
+<div class="vuetube">
+  <div class="vuetube__box" style="padding-bottom: 56.25%;"><img src="#" alt="" class="my-custom-thumbnail"><button type="button" aria-label="Play video" class="vuetube__button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48" class="vuetube__icon" aria-hidden="true" focusable="false">
+        <path class="vuetube__icon-bg" d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"></path>
+        <path class="vuetube__icon-triangle" d="M45 24L27 14v20"></path>
+      </svg></button></div>
+</div>
+`;

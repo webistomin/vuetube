@@ -1,4 +1,6 @@
 module.exports = {
+  preset: '@vue/cli-plugin-unit-jest',
+  collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{js,ts}'],
   coveragePathIgnorePatterns: ['/node_modules/'],
   moduleFileExtensions: ['ts', 'js'],
@@ -6,7 +8,9 @@ module.exports = {
     '@/(.*)': '<rootDir>/src/$1',
   },
   testEnvironment: 'jsdom',
-  testRegex: '(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$',
+  testMatch: [
+    '**/*.spec.[jt]s?(x)',
+  ],
   transform: {
     '.(ts|tsx)': 'ts-jest',
     '^.+\\.js$': 'babel-jest',
