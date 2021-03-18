@@ -71,7 +71,7 @@ yarn add vuetube
 ```js
 import Vue from 'vue'
 import VueTube from 'vuetube';
-import 'vuetube/vuetube.css'
+import 'vuetube/dist/vuetube.css'
 
 Vue.use(VueTube)
 ```
@@ -82,7 +82,7 @@ or
 ```js
 import Vue from 'vue'
 import { VueTube } from 'vuetube';
-import 'vuetube/vuetube.css'
+import 'vuetube/dist/vuetube.css'
 
 Vue.component('VueTube', VueTube)
 ```
