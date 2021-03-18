@@ -7,11 +7,11 @@
 
 <p align="center">
   Vue component acting as a thin layer over the YouTube IFrame Player API which renders fast.
-  <br>
+  <br/>
   <a href="https://vuetube.vercel.app/"><strong>Explore website »</strong></a>
 </p>
 
-<br>
+<br/>
 
 <p align="center">
   <a href="https://npmjs.org/package/vuetube">
@@ -310,27 +310,27 @@ Browse [online documentation here](https://vuetube.vercel.app/)
   </tr>
   <tr>
     <td><code>player:ready</code></td>
-    <td>This event fires whenever a player has finished loading and is ready to begin receiving API calls. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onReady</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event fires whenever a player has finished loading and is ready to begin receiving API calls. <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onReady</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
   <tr>
     <td><code>player:statechange</code></td>
-    <td>This event fires whenever the player's state changes. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onStateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event fires whenever the player's state changes. <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onStateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
   <tr>
     <td><code>player:playbackqualitychange</code></td>
-    <td>This event fires whenever the video playback quality changes. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onPlaybackQualityChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event fires whenever the video playback quality changes. <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onPlaybackQualityChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
   <tr>
     <td><code>player:playbackratechange</code></td>
-    <td>This event fires whenever the video playback rate changes.  <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onPlaybackRateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event fires whenever the video playback rate changes.  <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onPlaybackRateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
   <tr>
     <td><code>player:error</code></td>
-    <td>This event fires if an error occurs in the player. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onError</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event fires if an error occurs in the player. <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onError</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
   <tr>
     <td><code>player:apichange</code></td>
-    <td>This event is fired to indicate that the player has loaded (or unloaded) a module with exposed API methods. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onApiChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+    <td>This event is fired to indicate that the player has loaded (or unloaded) a module with exposed API methods. <br/><br/> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br/><br/> This event is similar to <code>onApiChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
   </tr>
 </table>
 
@@ -366,9 +366,9 @@ Now you have a player instance in the `playerInstance`. You can do whatever you 
 
 `this.playerInstance.playVideo()`, `this.playerInstance.pauseVideo()` etc. All methods can be found [here](https://developers.google.com/youtube/iframe_api_reference#Playback_controls).
 
-### How to use my own play button?
+### How to use my play button?
 
-You can pass your button through `icon` slot.
+You can pass your button through the `icon` slot.
 
 ```vue
   <template>
@@ -378,7 +378,10 @@ You can pass your button through `icon` slot.
           xmlns="http://www.w3.org/2000/svg"
           width="48"
           height="48"
-          viewBox="0 0 24 24">
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
           <path
             fill="#fff"
             d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-3 17v-10l9 5.146-9 4.854z"
@@ -389,9 +392,9 @@ You can pass your button through `icon` slot.
   </template>
 ```
 
-### How to use my own thumbnail?
+### How to use my thumbnail?
 
-You can pass your thumbnail through `thumbnail` slot.
+You can pass your thumbnail through the `thumbnail` slot.
 
 ```vue
   <template>
