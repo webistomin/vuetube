@@ -97,7 +97,7 @@ export default /* #__PURE__ */ Vue.extend({
       validator: (value) => ['lazy', 'eager', 'auto'].indexOf(value) !== -1,
     },
     /**
-     * Thumbnail from YouTube API
+     * Thumbnail resolution from YouTube API
      * @link https://stackoverflow.com/a/18400445/13374604
      */
     resolution: {

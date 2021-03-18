@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  A fast, lightweight, lazyload Vue component acting as a thin layer over the YouTube IFrame Player API which renders fast.
+  Vue component acting as a thin layer over the YouTube IFrame Player API which renders fast.
   <br>
   <a href="https://vuetube.vercel.app/"><strong>Explore website »</strong></a>
 </p>
@@ -47,10 +47,10 @@
 
 ## Key Features ✨
 
-* **Small** `~2KB` (minified and gzipped)
+* **Small** `~2KB` js (minified and gzipped) and `~1KB` css
 * **No dependencies**
 * **Lazy load** support
-* **Webp support**, and fallback to jpg if the browser doesn't support it
+* **Webp support**, and fallback to `jpg` if the browser doesn't support it
 * **Render fast**, improve your web's performance  
 * Built with **a11y** in mind
 
@@ -70,6 +70,7 @@ yarn add vuetube
 ```js
 import Vue from 'vue'
 import VueTube from 'vuetube';
+import 'vuetube/vuetube.css'
 
 Vue.use(VueTube)
 ```
@@ -80,6 +81,7 @@ or
 ```js
 import Vue from 'vue'
 import { VueTube } from 'vuetube';
+import 'vuetube/vuetube.css'
 
 Vue.component('VueTube', VueTube)
 ```
@@ -88,6 +90,248 @@ Vue.component('VueTube', VueTube)
 ## Documentation 🤗
 
 Browse [online documentation here](https://vuetube.vercel.app/)
+
+### Props
+
+<table>
+  <tr>
+    <td>
+      Prop
+    </td>
+    <td>
+      Type
+    </td>
+    <td>
+      Description
+    </td>
+    <td>
+      Default value
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>videoId</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      The ID of YouTube video (required)
+    </td>
+    <td>
+      -
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>isPlaylist</code>
+    </td>
+    <td>
+      <code>boolean</code>
+    </td>
+    <td>
+      Should embed a playlist of several videos
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>aspectRatio</code>
+    </td>
+    <td>
+      <code>number</code>
+    </td>
+    <td>
+      The aspect ratio for iframe
+    </td>
+    <td>
+      <code>16 / 9</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>enableCookies</code>
+    </td>
+    <td>
+      <code>boolean</code>
+    </td>
+    <td>
+      Change video host to <code>www.youtube.com</code>. By default, video loaded from <code>https://www.youtube-nocookie.com</code>.
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>playerVars</code>
+    </td>
+    <td>
+      <code>object</code>
+    </td>
+    <td>
+      <a href="https://developers.google.com/youtube/player_parameters#Parameters">Parameters</a> that are available in the YouTube embedded player.
+    </td>
+    <td>
+      <code>{}</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>disableWarming</code>
+    </td>
+    <td>
+      <code>boolean</code>
+    </td>
+    <td>
+      Disable warming up connections to origins that are in the critical path on component hover.
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>disableWebp</code>
+    </td>
+    <td>
+      <code>boolean</code>
+    </td>
+    <td>
+      Disable webp thumbnail.
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>imageAlt</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      Alt attribute for image
+    </td>
+    <td>
+      <code>''</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>imageLoading</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      <a href="https://caniuse.com/loading-lazy-attr">Loading attribute</a> for image
+    </td>
+    <td>
+      <code>'lazy'</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>resolution</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      <a href="https://stackoverflow.com/a/18400445/13374604">Thumbnail resolution</a> from YouTube API. 
+    </td>
+    <td>
+      <code>'sddefault'</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>buttonLabel</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      Aria-label attribute for button
+    </td>
+    <td>
+      <code>'Play video'</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>iframeTitle</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      Title attribute for iframe
+    </td>
+    <td>
+      <code>''</code>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>iframeAllow</code>
+    </td>
+    <td>
+      <code>string</code>
+    </td>
+    <td>
+      Allow attribute for iframe
+    </td>
+    <td>
+      <code>'accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture'</code>
+    </td>
+  </tr>
+</table>
+
+### Events
+
+<table>
+  <tr>
+    <td>Event name</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td><code>player:play</code></td>
+    <td>The user clicked on the play button</td>
+  </tr>
+  <tr>
+    <td><code>player:load</code></td>
+    <td>Iframe has been loaded</td>
+  </tr>
+  <tr>
+    <td><code>player:ready</code></td>
+    <td>This event fires whenever a player has finished loading and is ready to begin receiving API calls. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onReady</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+  <tr>
+    <td><code>player:statechange</code></td>
+    <td>This event fires whenever the player's state changes. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onStateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+  <tr>
+    <td><code>player:playbackqualitychange</code></td>
+    <td>This event fires whenever the video playback quality changes. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onPlaybackQualityChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+  <tr>
+    <td><code>player:playbackratechange</code></td>
+    <td>This event fires whenever the video playback rate changes.  <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onPlaybackRateChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+  <tr>
+    <td><code>player:error</code></td>
+    <td>This event fires if an error occurs in the player. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onError</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+  <tr>
+    <td><code>player:apichange</code></td>
+    <td>This event is fired to indicate that the player has loaded (or unloaded) a module with exposed API methods. <br><br> <strong>Make sure you pass <code>enablejsapi: 1</code> to the <code>playerVars</code> props object</strong> <br><br> This event is similar to <code>onApiChange</code> event from <a href="https://developers.google.com/youtube/iframe_api_reference#Events">Youtube API documentation</a>.</td>
+  </tr>
+</table>
 
 ## Browsers support 🌎
 
