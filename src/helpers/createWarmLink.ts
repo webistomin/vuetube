@@ -11,7 +11,7 @@ function createWarmLink(url: string, addCrossorigin: boolean): void {
     el.crossOrigin = '';
   }
 
-  document.head.append(el);
+  document.head.appendChild(el);
 }
 
 export { createWarmLink };
