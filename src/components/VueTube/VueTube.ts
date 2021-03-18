@@ -427,6 +427,7 @@ export default /* #__PURE__ */ Vue.extend({
             src: iframeUrl,
             allow: iframeAllow,
             title: iframeTitle,
+            allowfullscreen: true,
           },
           on: {
             load: onIframeLoad,
