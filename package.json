@@ -92,7 +92,7 @@
     "@storybook/addons": "^6.1.20",
     "@storybook/theming": "^6.1.20",
     "@storybook/vue": "^6.1.20",
-    "@types/jest": "^26.0.20",
+    "@types/jest": "^26.0.21",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
     "@vue/cli-plugin-unit-jest": "^4.5.12",
