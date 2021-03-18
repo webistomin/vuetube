@@ -16,11 +16,11 @@ Pull requests are the greatest contributions, so be sure they are focused in sco
 1. To begin, [fork this project], clone your fork, and add our upstream.
 	```bash
 	# Clone your fork of the repo into the current directory
-	git clone https://github.com/<your-username>/vue-socials
+	git clone https://github.com/<your-username>/vuetube
 	# Navigate to the newly cloned directory
-	cd vue-socials
+	cd vuetube
 	# Assign the original repo to a remote called "upstream"
-	git remote add upstream https://github.com/webistomin/vue-socials
+	git remote add upstream https://github.com/webistomin/vuetube
 	# Install the tools necessary for development
 	npm install
 	```
