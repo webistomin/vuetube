@@ -12,11 +12,12 @@ import {
 import { createWarmLink } from '@/helpers/createWarmLink';
 import { getStringifiedParams } from '@/helpers/getStringifiedParams';
 import { loadYoutubeAPI } from '@/helpers/loadYoutubeAPI';
-import { getNormalizeSlot } from '@/helpers/getNormalizedSlot';
 import { isFunction } from '@/helpers/inspect';
 import { TImageLoading } from '@/types/imageLoading';
 import { TThumbnailResolution } from '@/types/thumbnailResolution';
-import Vue, { PropType, VNode } from 'vue';
+import {
+  defineComponent, h, PropType, VNode,
+} from 'vue';
 
 declare global {
   interface Window {
@@ -25,7 +26,7 @@ declare global {
   }
 }
 
-export default /* #__PURE__ */ Vue.extend({
+export default /* #__PURE__ */ defineComponent({
   name: 'VueTube',
 
   props: {
@@ -94,7 +95,7 @@ export default /* #__PURE__ */ Vue.extend({
     imageLoading: {
       type: String as PropType<TImageLoading>,
       default: 'lazy',
-      validator: (value) => ['lazy', 'eager', 'auto'].indexOf(value) !== -1,
+      validator: (value: string) => ['lazy', 'eager', 'auto'].indexOf(value) !== -1,
     },
     /**
      * Thumbnail resolution from YouTube API
@@ -103,7 +104,7 @@ export default /* #__PURE__ */ Vue.extend({
     resolution: {
       type: String as PropType<TThumbnailResolution>,
       default: 'sddefault',
-      validator: (value) => ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'].indexOf(value) !== -1,
+      validator: (value: string) => ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'].indexOf(value) !== -1,
     },
     /**
      * Aria-label attribute for button
@@ -153,10 +154,21 @@ export default /* #__PURE__ */ Vue.extend({
       player: null,
     };
   },
+
+  emits: [
+    'player:play',
+    'player:ready',
+    'player:statechange',
+    'player:playbackqualitychange',
+    'player:playbackratechange',
+    'player:error',
+    'player:apichange',
+    'player:load',
+  ],
   /**
    * Clear out the reference to the destroyed player
    */
-  beforeDestroy() {
+  beforeUnmount() {
     const { player } = this;
 
     if (player !== null && typeof player.destroy === 'function') {
@@ -222,7 +234,6 @@ export default /* #__PURE__ */ Vue.extend({
      */
     boxComponent(): VNode {
       const {
-        $createElement,
         calculatedAspectRatioPadding,
         isPlayed,
         iframeComponent,
@@ -232,22 +243,20 @@ export default /* #__PURE__ */ Vue.extend({
         playVideo,
       } = this;
 
-      const BOX_COMPONENT = $createElement(
+      const BOX_COMPONENT = h(
         'div',
         {
-          on: {
-            '~pointerover': warmConnections,
-            '~click': playVideo,
-          },
           class: [
             'vuetube',
             {
               'vuetube--played': isPlayed,
             },
           ],
+          onPointerOverOnce: warmConnections,
+          onClickOnce: playVideo,
         },
         [
-          $createElement(
+          h(
             'div',
             {
               class: 'vuetube__box',
@@ -271,8 +280,6 @@ export default /* #__PURE__ */ Vue.extend({
     thumbnailComponent(): VNode | VNode[] {
       const {
         $slots,
-        $scopedSlots,
-        $createElement,
         resolution,
         videoId,
         disableWebp,
@@ -283,7 +290,7 @@ export default /* #__PURE__ */ Vue.extend({
       const webp = `${YTIMG_URL}/vi_webp/${videoId}/${resolution}.webp`;
       const jpg = `${YTIMG_URL}/vi/${videoId}/${resolution}.jpg`;
 
-      const THUMBNAIL_COMPONENT = $createElement(
+      const THUMBNAIL_COMPONENT = h(
         'picture',
         {
           class: [
@@ -291,65 +298,57 @@ export default /* #__PURE__ */ Vue.extend({
           ],
         },
         [
-          !disableWebp && $createElement(
+          !disableWebp && h(
             'source',
             {
-              attrs: {
-                srcset: webp,
-                type: 'image/webp',
-              },
+              srcset: webp,
+              type: 'image/webp',
             },
           ),
-          $createElement(
+          h(
             'source',
             {
-              attrs: {
-                srcset: jpg,
-                type: 'image/jpeg',
-              },
+              srcset: jpg,
+              type: 'image/jpeg',
             },
           ),
-          $createElement(
+          h(
             'img',
             {
               class: [
                 'vuetube__image',
               ],
-              attrs: {
-                src: jpg,
-                alt: imageAlt,
-                loading: imageLoading,
-              },
+              src: jpg,
+              alt: imageAlt,
+              loading: imageLoading,
             },
           ),
         ],
       );
 
-      return getNormalizeSlot('thumbnail', {}, $slots, $scopedSlots) || THUMBNAIL_COMPONENT;
+      return $slots.thumbnail?.() || THUMBNAIL_COMPONENT;
     },
     /**
      * Button component
      */
     playBtnComponent(): VNode {
       const {
-        $createElement,
         buttonLabel,
         playVideo,
         playBtnIconComponent,
       } = this;
 
-      const PLAY_BTN_COMPONENT = $createElement(
+      const PLAY_BTN_COMPONENT = h(
         'button',
         {
           class: [
             'vuetube__button',
           ],
-          attrs: {
-            type: 'button',
-            'aria-label': buttonLabel,
-          },
-          on: {
-            '~click': playVideo,
+          type: 'button',
+          'aria-label': buttonLabel,
+          onClick: {
+            handler: playVideo,
+            once: true,
           },
         },
         [
@@ -364,74 +363,61 @@ export default /* #__PURE__ */ Vue.extend({
      */
     playBtnIconComponent(): VNode | VNode[] {
       const {
-        $createElement,
         $slots,
-        $scopedSlots,
       } = this;
 
-      const PLAY_BTN_ICON_COMPONENT = $createElement(
+      const PLAY_BTN_ICON_COMPONENT = h(
         'svg',
         {
-          attrs: {
-            xmlns: 'http://www.w3.org/2000/svg',
-            viewBox: '0 0 68 48',
-            class: 'vuetube__icon',
-            'aria-hidden': true,
-            focusable: 'false',
-          },
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 68 48',
+          class: 'vuetube__icon',
+          'aria-hidden': true,
+          focusable: 'false',
         },
         [
-          $createElement(
+          h(
             'path',
             {
-              attrs: {
-                class: 'vuetube__icon-bg',
-                d: 'M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z',
-              },
+              class: 'vuetube__icon-bg',
+              d: 'M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z',
             },
           ),
-          $createElement(
+          h(
             'path',
             {
-              attrs: {
-                class: 'vuetube__icon-triangle',
-                d: 'M45 24L27 14v20',
-              },
+              class: 'vuetube__icon-triangle',
+              d: 'M45 24L27 14v20',
             },
           ),
         ],
       );
 
-      return getNormalizeSlot('icon', {}, $slots, $scopedSlots) || PLAY_BTN_ICON_COMPONENT;
+      return $slots.icon?.() || PLAY_BTN_ICON_COMPONENT;
     },
     /**
      * Iframe component
      */
     iframeComponent(): VNode {
       const {
-        $createElement,
         iframeTitle,
         onIframeLoad,
         iframeAllow,
         iframeUrl,
       } = this;
 
-      const IFRAME_COMPONENT = $createElement(
+      const IFRAME_COMPONENT = h(
         'iframe',
         {
           ref: 'iframe',
           class: [
             'vuetube__iframe',
           ],
-          attrs: {
-            src: iframeUrl,
-            allow: iframeAllow,
-            title: iframeTitle,
-            allowfullscreen: true,
-          },
-          on: {
-            load: onIframeLoad,
-          },
+          src: iframeUrl,
+          allow: iframeAllow,
+          title: iframeTitle,
+          allowfullscreen: true,
+          onLoad: onIframeLoad,
         },
       );
 
@@ -513,7 +499,6 @@ export default /* #__PURE__ */ Vue.extend({
       const el = $refs.iframe as HTMLIFrameElement;
       el.focus();
 
-      // @ts-expect-error check user vars
       const SHOULD_LOAD_API = playerVars.enablejsapi === 1;
 
       if (SHOULD_LOAD_API) {

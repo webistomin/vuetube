@@ -1,4 +1,4 @@
-import _Vue, { PluginFunction } from 'vue';
+import { App, Plugin } from 'vue';
 
 /**
  * Import vue components
@@ -8,8 +8,8 @@ import { VueTube } from '@/components';
 /**
  * Install function executed by Vue.use()
  */
-const install: PluginFunction<never> = function installVueTube(Vue: typeof _Vue) {
-  Vue.component(VueTube.name, VueTube);
+const install: Exclude<Plugin['install'], undefined> = function installVueTube(app: App) {
+  app.component(VueTube.name, VueTube);
 };
 
 /**

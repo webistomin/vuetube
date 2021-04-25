@@ -1,4 +1,4 @@
-import { Story } from '@storybook/vue';
+import { Story } from '@storybook/vue3';
 import { action } from '@storybook/addon-actions';
 import VueTube from '../VueTube';
 import SVueTubeMDX from './VueTube.mdx';
@@ -21,23 +21,36 @@ const thumbnail = {
   alt: 'Video coming soon',
 };
 
-const Template: Story = (_args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+const Template: Story = (args) => ({
   components: { VueTube },
-  methods: {
-    onReady: action('emit player:ready'),
-    onStateChange: action('emit player:statechange'),
-    onPlaybackQualityChange: action('emit player:playbackqualitychange'),
-    onPlaybackRateChange: action('emit player:playbackratechange'),
-    onError: action('emit player:error'),
-    onApiChange: action('emit player:apichange'),
-    onLoad: action('emit player:load'),
-    onPlay: action('emit player:play'),
+
+  setup() {
+    const onReady = action('emit player:ready');
+    const onStateChange = action('emit player:statechange');
+    const onPlaybackQualityChange = action('emit player:playbackqualitychange');
+    const onPlaybackRateChange = action('emit player:playbackratechange');
+    const onError = action('emit player:error');
+    const onApiChange = action('emit player:apichange');
+    const onLoad = action('emit player:load');
+    const onPlay = action('emit player:play');
+
+    return {
+      args,
+      onReady,
+      onStateChange,
+      onPlaybackQualityChange,
+      onPlaybackRateChange,
+      onError,
+      onApiChange,
+      onLoad,
+      onPlay,
+    };
   },
+
   template: `
     <div class="story-vuetube-container">
     <vue-tube
-      v-bind="$props"
+      v-bind="args"
       @player:ready="onReady"
       @player:statechange="onStateChange"
       @player:playbackqualitychange="onPlaybackRateChange"
@@ -51,23 +64,36 @@ const Template: Story = (_args, { argTypes }) => ({
   `,
 });
 
-const TemplateWithAPI: Story = (_args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+const TemplateWithAPI: Story = (args) => ({
   components: { VueTube },
-  methods: {
-    onReady: action('emit player:ready'),
-    onStateChange: action('emit player:statechange'),
-    onPlaybackQualityChange: action('emit player:playbackqualitychange'),
-    onPlaybackRateChange: action('emit player:playbackratechange'),
-    onError: action('emit player:error'),
-    onApiChange: action('emit player:apichange'),
-    onLoad: action('emit player:load'),
-    onPlay: action('emit player:play'),
+
+  setup() {
+    const onReady = action('emit player:ready');
+    const onStateChange = action('emit player:statechange');
+    const onPlaybackQualityChange = action('emit player:playbackqualitychange');
+    const onPlaybackRateChange = action('emit player:playbackratechange');
+    const onError = action('emit player:error');
+    const onApiChange = action('emit player:apichange');
+    const onLoad = action('emit player:load');
+    const onPlay = action('emit player:play');
+
+    return {
+      args,
+      onReady,
+      onStateChange,
+      onPlaybackQualityChange,
+      onPlaybackRateChange,
+      onError,
+      onApiChange,
+      onLoad,
+      onPlay,
+    };
   },
+
   template: `
     <div class="story-vuetube-container">
     <vue-tube
-      v-bind="$props"
+      v-bind="args"
       @player:ready="onReady"
       @player:statechange="onStateChange"
       @player:playbackqualitychange="onPlaybackRateChange"
@@ -81,23 +107,36 @@ const TemplateWithAPI: Story = (_args, { argTypes }) => ({
   `,
 });
 
-const TemplateWithCustomButton: Story = (_args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+const TemplateWithCustomButton: Story = (args) => ({
   components: { VueTube },
-  methods: {
-    onReady: action('emit player:ready'),
-    onStateChange: action('emit player:statechange'),
-    onPlaybackQualityChange: action('emit player:playbackqualitychange'),
-    onPlaybackRateChange: action('emit player:playbackratechange'),
-    onError: action('emit player:error'),
-    onApiChange: action('emit player:apichange'),
-    onLoad: action('emit player:load'),
-    onPlay: action('emit player:play'),
+
+  setup() {
+    const onReady = action('emit player:ready');
+    const onStateChange = action('emit player:statechange');
+    const onPlaybackQualityChange = action('emit player:playbackqualitychange');
+    const onPlaybackRateChange = action('emit player:playbackratechange');
+    const onError = action('emit player:error');
+    const onApiChange = action('emit player:apichange');
+    const onLoad = action('emit player:load');
+    const onPlay = action('emit player:play');
+
+    return {
+      args,
+      onReady,
+      onStateChange,
+      onPlaybackQualityChange,
+      onPlaybackRateChange,
+      onError,
+      onApiChange,
+      onLoad,
+      onPlay,
+    };
   },
+
   template: `
     <div class="story-vuetube-container">
     <vue-tube
-      v-bind="$props"
+      v-bind="args"
       @player:ready="onReady"
       @player:statechange="onStateChange"
       @player:playbackqualitychange="onPlaybackRateChange"
@@ -123,31 +162,39 @@ const TemplateWithCustomButton: Story = (_args, { argTypes }) => ({
   `,
 });
 
-const TemplateWithCustomThumbnail: Story = (_args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+const TemplateWithCustomThumbnail: Story = (args) => ({
   components: { VueTube },
-  computed: {
-    src() {
-      return thumbnail.src;
-    },
-    alt() {
-      return thumbnail.alt;
-    },
-  },
-  methods: {
-    onReady: action('emit player:ready'),
-    onStateChange: action('emit player:statechange'),
-    onPlaybackQualityChange: action('emit player:playbackqualitychange'),
-    onPlaybackRateChange: action('emit player:playbackratechange'),
-    onError: action('emit player:error'),
-    onApiChange: action('emit player:apichange'),
-    onLoad: action('emit player:load'),
-    onPlay: action('emit player:play'),
+
+  setup() {
+    const onReady = action('emit player:ready');
+    const onStateChange = action('emit player:statechange');
+    const onPlaybackQualityChange = action('emit player:playbackqualitychange');
+    const onPlaybackRateChange = action('emit player:playbackratechange');
+    const onError = action('emit player:error');
+    const onApiChange = action('emit player:apichange');
+    const onLoad = action('emit player:load');
+    const onPlay = action('emit player:play');
+    const { src } = thumbnail;
+    const { alt } = thumbnail;
+
+    return {
+      args,
+      onReady,
+      onStateChange,
+      onPlaybackQualityChange,
+      onPlaybackRateChange,
+      onError,
+      onApiChange,
+      onLoad,
+      onPlay,
+      src,
+      alt,
+    };
   },
   template: `
     <div class="story-vuetube-container">
     <vue-tube
-      v-bind="$props"
+      v-bind="args"
       @player:ready="onReady"
       @player:statechange="onStateChange"
       @player:playbackqualitychange="onPlaybackRateChange"
@@ -164,23 +211,36 @@ const TemplateWithCustomThumbnail: Story = (_args, { argTypes }) => ({
   `,
 });
 
-const TemplateWithMultipleVideos: Story = (_args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+const TemplateWithMultipleVideos: Story = (args) => ({
   components: { VueTube },
-  methods: {
-    onReady: action('emit player:ready'),
-    onStateChange: action('emit player:statechange'),
-    onPlaybackQualityChange: action('emit player:playbackqualitychange'),
-    onPlaybackRateChange: action('emit player:playbackratechange'),
-    onError: action('emit player:error'),
-    onApiChange: action('emit player:apichange'),
-    onLoad: action('emit player:load'),
-    onPlay: action('emit player:play'),
+
+  setup() {
+    const onReady = action('emit player:ready');
+    const onStateChange = action('emit player:statechange');
+    const onPlaybackQualityChange = action('emit player:playbackqualitychange');
+    const onPlaybackRateChange = action('emit player:playbackratechange');
+    const onError = action('emit player:error');
+    const onApiChange = action('emit player:apichange');
+    const onLoad = action('emit player:load');
+    const onPlay = action('emit player:play');
+
+    return {
+      args,
+      onReady,
+      onStateChange,
+      onPlaybackQualityChange,
+      onPlaybackRateChange,
+      onError,
+      onApiChange,
+      onLoad,
+      onPlay,
+    };
   },
+
   template: `
     <div class="story-vuetube-container">
     <vue-tube
-      v-bind="$props"
+      v-bind="args"
       @player:ready="onReady"
       @player:statechange="onStateChange"
       @player:playbackqualitychange="onPlaybackRateChange"
