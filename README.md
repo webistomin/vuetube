@@ -59,32 +59,68 @@
 
 **npm**
 ```shell
+# Vue 2
 npm install vuetube
+
+# Vue 3
+npm install vuetube@next
 ```
 
 **yarn**
 ```shell
+# Vue 2
 yarn add vuetube
+
+# Vue 3
+yarn add vuetube@next
 ```
 
 **Install plugin**
 ```js
+/**
+ * Vue 2
+ */
 import Vue from 'vue'
 import VueTube from 'vuetube';
 import 'vuetube/dist/vuetube.css'
 
 Vue.use(VueTube)
+
+/**
+ * Vue 3
+ */
+import { createApp } from 'vue'
+import VueTube from 'vuetube';
+import 'vuetube/dist/vuetube.css'
+import App from './App.vue'
+
+const app = createApp(App)
+app.use(VueTube)
 ```
 
 or
 
 **Install component**
 ```js
+/**
+ * Vue 2
+ */
 import Vue from 'vue'
 import { VueTube } from 'vuetube';
 import 'vuetube/dist/vuetube.css'
 
 Vue.component('VueTube', VueTube)
+
+/**
+ * Vue 3
+ */
+import { createApp } from 'vue'
+import { VueTube } from 'vuetube';
+import 'vuetube/dist/vuetube.css'
+import App from './App.vue'
+
+const app = createApp(App)
+app.component('VueTube', VueTube)
 ```
 
 
